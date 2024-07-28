@@ -1,0 +1,99 @@
+My-Hugging-face-Link --->  https://huggingface.co/spaces/rajan9089/Crop-Recommendation/tree/main
+
+Chat-GPT reference   ---->  https://chatgpt.com/c/2d2ecbaa-3579-4822-9137-799ff01df8d0
+
+
+
+1. Adapt Your Code for Streamlit
+You need to convert your Flask app to a Streamlit app. Streamlit uses a simpler syntax for creating web apps.
+
+app.py Conversion
+Here’s how you can adapt your Flask application to Streamlit:
+
+import streamlit as st
+import numpy as np
+import pickle
+
+# Load your model and scalers
+model = pickle.load(open('model.pkl', 'rb'))
+sc = pickle.load(open('standscaler.pkl', 'rb'))
+ms = pickle.load(open('minmaxscaler.pkl', 'rb'))
+
+# Title of the web app
+st.title("Crop Recommendation System 🌱")
+
+# Add input fields
+N = st.number_input("Enter Nitrogen content", min_value=0.0)
+P = st.number_input("Enter Phosphorus content", min_value=0.0)
+K = st.number_input("Enter Potassium content", min_value=0.0)
+temp = st.number_input("Enter Temperature in °C", min_value=0.0)
+humidity = st.number_input("Enter Humidity in %", min_value=0.0)
+ph = st.number_input("Enter pH value", min_value=0.0)
+rainfall = st.number_input("Enter Rainfall in mm", min_value=0.0)
+
+if st.button("Get Recommendation"):
+    feature_list = [N, P, K, temp, humidity, ph, rainfall]
+    single_pred = np.array(feature_list).reshape(1, -1)
+    
+    scaled_features = ms.transform(single_pred)
+    final_features = sc.transform(scaled_features)
+    prediction = model.predict(final_features)
+
+    crop_dict = {1: "Rice", 2: "Maize", 3: "Jute", 4: "Cotton", 5: "Coconut", 6: "Papaya", 7: "Orange",
+                 8: "Apple", 9: "Muskmelon", 10: "Watermelon", 11: "Grapes", 12: "Mango", 13: "Banana",
+                 14: "Pomegranate", 15: "Lentil", 16: "Blackgram", 17: "Mungbean", 18: "Mothbeans",
+                 19: "Pigeonpeas", 20: "Kidneybeans", 21: "Chickpea", 22: "Coffee"}
+
+    if prediction[0] in crop_dict:
+        crop = crop_dict[prediction[0]]
+        result = f"{crop} is the best crop to be cultivated right there."
+    else:
+        result = "Sorry, we could not determine the best crop to be cultivated with the provided data."
+
+    st.success(result)
+
+
+
+
+2. Create requirements.txt
+Ensure you have the required libraries in your requirements.txt
+
+streamlit
+numpy
+scikit-learn
+pickle-mixin
+
+
+
+
+3. Deploy on Hugging Face Spaces
+Follow these steps to deploy your Streamlit app on Hugging Face Spaces:
+
+Create a Hugging Face Account: Sign up on Hugging Face.
+
+Create a New Space:
+
+Go to Hugging Face Spaces.
+Click on "New Space".
+Provide a name for your Space, choose Streamlit as the SDK, and set the visibility (public or private).
+
+
+Upload Your Files:
+
+Navigate to your Space.
+Click on the “Files and versions” tab.
+Upload app.py (your Streamlit app file) and requirements.txt.
+Deploy:
+
+After uploading, commit the changes.
+Hugging Face will automatically build and deploy your Streamlit app.
+4. Test Your Application
+Once deployed, you can test your application by navigating to the URL provided by Hugging Face Spaces.
+
+
+
+
+
+
+
+
